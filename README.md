@@ -103,5 +103,5 @@ able to use the popup in place for creating companies
 ## API
 
 The browsable API located at
-http://127.0.0.1:8000/api/v1/orders/ 
+http://127.0.0.1:8000/api/v1/restaurant/
 
