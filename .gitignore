@@ -296,3 +296,6 @@ dmypy.json
 cython_debug/
 
 .idea/**
+
+# Development only, server can have different APP_UPLOAD_DIR env variable
+upload/**

@@ -126,3 +126,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/upload/'
+MEDIA_ROOT = os.environ.get('APP_UPLOAD_DIR', 'upload')
