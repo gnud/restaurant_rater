@@ -1,7 +1,9 @@
 from django.db import models
 
+from api.mixins import TimeStampMixin
 
-class Restaurant(models.Model):
+
+class Restaurant(TimeStampMixin):
     name = models.CharField(max_length=160)
     description = models.TextField()
     address = models.CharField(max_length=35)
