@@ -29,19 +29,19 @@ Bonus points, API is deployed somewhere (For example, Heroku)`
 
 
 # TODOS
-- django project                    [x]
-- django app for API                [x]
-- documentations                    [x]
-- django app routes                 [x]
+- [x] django project
+- [x] django app for API
+- [x] documentations
+- [x] django app routes
 - requirements
-    1. Everyone can add/remove/up...[] 
-    1. Every user gets X (hardcod...[]
-    1. Every day vote amounts ar... []
-    1. Show the history of selec... []
-    1. Do not forget, that front... []
-    1. API routes dump in docs      []
-- docker container + docker compose []
-- production on Heroku              []
+    1. [ ] Everyone can add/remove/up... 
+    1. [ ] Every user gets X (hardcod...
+    1. [ ] Every day vote amounts ar...
+    1. [ ] Show the history of selec...
+    1. [ ] Do not forget, that front...
+    1. [ ] API routes dump in docs
+- [ ] docker container + docker compose
+- [ ] production on Heroku
 
 
 # Quick start
