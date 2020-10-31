@@ -161,3 +161,7 @@ CONSTANCE_CONFIG = {
 # USER variables
 
 DEFAULT_OTHER_POINTS = 0.25
+POINTS_RULES = {
+    1: 1,
+    2: 0.5
+}
