@@ -14,3 +14,16 @@ class RestaurantSerializer(serializers.ModelSerializer):
             'address',
             'cover',
         )
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantSerializer(read_only=True)
+
+    class Meta:
+        model = models.Vote
+        fields = (
+            'pk',
+            'restaurant',
+            'created',
+            'points',
+        )

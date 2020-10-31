@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     # 3rd party apps
     'rest_framework',
     'rest_framework.authtoken',
+    'constance.backends.database',
+    'constance',
 
     # Project apps
     'api.apps.ApiConfig',
@@ -140,3 +142,22 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/upload/'
 MEDIA_ROOT = os.environ.get('APP_UPLOAD_DIR', 'upload')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
+
+
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+CONSTANCE_CONFIG = {
+    'DAILY_VOTES': (5, 'Rule for daily votes'),
+}
+
+
+# USER variables
+
+DEFAULT_OTHER_POINTS = 0.25

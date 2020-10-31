@@ -4,5 +4,8 @@ djangorestframework==3.12.1
 # ImageField
 Pillow==8.0.1
 
+# Other
+django-constance[database]==2.7.0
+
 # Development
 django_extensions==3.0.3

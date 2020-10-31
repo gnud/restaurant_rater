@@ -5,6 +5,12 @@ from . import api
 
 router = routers.DefaultRouter()
 router.register(r'restaurant', api.RestaurantViewSet)
+router.register(r'votes', api.VoteViewSet)
+router.register(
+    prefix=r'restaurant/(?P<pk>[^/]+)/vote',
+    viewset=api.VoteCreateVoteViewSet,
+    basename='api-v2-restaurant-vote'
+)
 
 
 urlpatterns = (
