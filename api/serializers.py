@@ -43,8 +43,20 @@ class RestaurantSerializer(serializers.ModelSerializer):
         )
 
 
-class VoteSerializer(serializers.ModelSerializer):
-    restaurant = RestaurantSerializer(read_only=True)
+class RestaurantResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Restaurant
+        fields = (
+            'pk',
+            'name',
+            'description',
+            'address',
+            'cover'
+        )
+
+
+class VoteResponseSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantResponseSerializer()
 
     class Meta:
         model = models.Vote

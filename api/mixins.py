@@ -7,3 +7,9 @@ class TimeStampMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+class MultiSerializersMixin:
+    def get_serializer_class(self):
+        # noinspection PyUnresolvedReferences
+        return self.serializer_classes.get(self.action, self.serializer_class)

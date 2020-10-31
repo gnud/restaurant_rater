@@ -7,12 +7,18 @@ from rest_framework.response import Response
 from . import models
 from . import serializers
 from . import utils
+from .mixins import MultiSerializersMixin
 
 
-class RestaurantViewSet(viewsets.ModelViewSet):
+class RestaurantViewSet(MultiSerializersMixin, viewsets.ModelViewSet):
     """ViewSet for the Restaurant class"""
     queryset = models.Restaurant.objects.all()
     serializer_class = serializers.RestaurantSerializer
+    serializer_classes = {
+        'retrieve': serializers.RestaurantResponseSerializer,
+        'list': serializers.RestaurantSerializer,
+        'create': serializers.RestaurantResponseSerializer,
+    }
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -26,7 +32,7 @@ class VoteViewSet(viewsets.ModelViewSet):
 class VoteCreateVoteViewSet(viewsets.GenericViewSet):
     """ViewSet for the Vote class"""
     queryset = models.Restaurant.objects.all()
-    serializer_class = serializers.RestaurantSerializer
+    serializer_class = serializers.VoteResponseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     # noinspection PyUnusedLocal
@@ -73,21 +79,6 @@ class VoteCreateVoteViewSet(viewsets.GenericViewSet):
             user=user,
         )
 
-        _serializer = self.get_serializer_vote(vote)
-
-        if not _serializer:
-            # Skip update if primary category
-            return Response([{
-                'error': _serializer.errors,
-            }], status=status.HTTP_400_BAD_REQUEST)
+        _serializer = self.get_serializer(vote)
 
         return Response(data=_serializer.data)
-
-    @staticmethod
-    def get_serializer_vote(instance):
-        _serializer = serializers.VoteSerializer(data={}, instance=instance)
-
-        if not _serializer.is_valid(raise_exception=False):
-            return None
-
-        return _serializer
