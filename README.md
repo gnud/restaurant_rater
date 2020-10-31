@@ -80,9 +80,13 @@ Do initial migration first
 
 # Usage
 
+## API Docs
+A guest user can browse API docs via the Insomnia viewer web interface, provided
+via http://127.0.0.1:8000/static/index.html
+
 ## Admin
 
-An admin user can login via the admin web interface, provide
+An admin user can login via the admin web interface, provided
 via http://127.0.0.1/admin/
 
 ## Create a sample user
