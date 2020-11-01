@@ -1,3 +1,4 @@
+from constance import config
 from django.contrib.auth import get_user_model
 from faker import Faker
 
@@ -5,6 +6,8 @@ from model_bakery import baker
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
+from api import models
 
 fake = Faker()
 
@@ -15,6 +18,7 @@ TOTAL_RESTAURANTS = 3
 # basename endpoints
 RESTAURANT_LIST_URL = "restaurant-list"
 RESTAURANT_DETAIL_URL = "restaurant-detail"
+RESTAURANT_VOTE_URL = "api-v2-restaurant-vote-list"
 
 
 class RestaurantTests(APITestCase):
@@ -211,3 +215,66 @@ class RestaurantTests(APITestCase):
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class VotingTests(APITestCase):
+
+    def setUp(self) -> None:
+        super().setUp()
+
+        baker.make_recipe(
+            'api.userTemplate',
+            _quantity=TOTAL_USERS,
+        )
+        baker.make_recipe(
+            'api.restaurantTemplate',
+            _quantity=TOTAL_RESTAURANTS,
+        )
+
+    def test_vote(self):
+        random_obj = models.Restaurant.objects.first()
+        url = reverse(RESTAURANT_VOTE_URL, args=(random_obj.pk,))
+        self.client.force_login(get_user_model().objects.first())
+
+        print(f'Voting time [Normal]:')
+        for i in range(1, config.DAILY_VOTES + 1):
+            response = self.client.post(url)
+
+            is_last = i == (config.DAILY_VOTES + 1)
+            print(f'Try: {i}, is_over: \t{is_last}\t, i: {i} code: {response.status_code}')
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_vote_403(self):
+        random_obj = models.Restaurant.objects.first()
+        url = reverse(RESTAURANT_VOTE_URL, args=(random_obj.pk,))
+
+        print(f'Voting time [Normal]:')
+        for i in range(1, config.DAILY_VOTES + 1):
+            response = self.client.post(url)
+
+            is_last = i == (config.DAILY_VOTES + 1)
+            print(f'Try: {i}, is_over: \t{is_last}\t, i: {i} code: {response.status_code}')
+
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_overvote(self):
+        random_obj = models.Restaurant.objects.first()
+        url = reverse(RESTAURANT_VOTE_URL, args=(random_obj.pk,))
+        self.client.force_login(get_user_model().objects.first())
+
+        total_allowed_votes = (config.DAILY_VOTES + 1) + 1  # +1 will over vote
+
+        print(f'Voting time[Over vote]:')
+
+        for i in range(1, total_allowed_votes):
+            response = self.client.post(url)
+
+            is_over = i == (config.DAILY_VOTES + 1)
+            print(f'Try: {i}, is_over: \t{is_over}\t, i: {i} code: {response.status_code}')
+
+            if not is_over:
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+            if is_over:
+                self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
