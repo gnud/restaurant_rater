@@ -116,3 +116,9 @@ To run RestaurantTests
 ```bash
 ./manage.py test api.tests.RestaurantTests
 ```
+
+To run VotingTests
+
+```bash
+./manage.py test api.tests.VotingTests
+```
