@@ -109,3 +109,10 @@ able to use the popup in place for creating companies
 The browsable API located at
 http://127.0.0.1:8000/api/v1/restaurant/
 
+## Testing
+
+To run RestaurantTests
+
+```bash
+./manage.py test api.tests.RestaurantTests
+```
