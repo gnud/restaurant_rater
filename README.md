@@ -41,7 +41,7 @@ Bonus points, API is deployed somewhere (For example, Heroku)`
     1. [ ] Do not forget, that front... [WIP: vote done 1 of 2]
     1. [x] API routes dump in docs [WIP]
 - [x] docker container + docker compose
-- [x] production on Heroku
+- [x] production on Heroku or better
 
 
 # Quick start
