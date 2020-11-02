@@ -88,7 +88,10 @@ Now setup a cache table for the cache database backend
 
 ## API Docs
 A guest user can browse API docs via the Insomnia viewer web interface, provided
-via http://127.0.0.1:8000/static/index.html
+via http://127.0.0.1:8000/docs/index.html
+
+A docker based server can be visited by http://localhost:8000/docs/index.html
+A production server can be visited by http://localhost:8000/docs/index.html
 
 ## Run server
 
