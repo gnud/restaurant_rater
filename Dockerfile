@@ -10,11 +10,11 @@ ARG DJANGO_SETTINGS_MODULE=restaurant_rater.settings
 WORKDIR /app/
 
 RUN apt-get update \
-    && apt-get install vim less python3-dev -y \
+    && apt-get install vim less sqlite3 python3-dev -y \
     && apt-get install libpq-dev -y \
     && pip --disable-pip-version-check install --cache-dir=/.pip -r requirements.txt \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /libs/ \
     && rm -rf /.pip
 
-CMD [ "gunicorn", "-c", "/app/restaurant_rater/gunicorn.conf.py", "restaurant_rater.wsgi:application"]
+CMD [ "gunicorn", "--capture-output", "--enable-stdio-inheritance", "-c", "/app/restaurant_rater/gunicorn.conf.py", "restaurant_rater.wsgi:application"]
