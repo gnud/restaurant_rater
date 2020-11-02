@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+  dj-api:
+    build: .
+    ports:
+        -  "8000:8000"
+    volumes:
+        - ./docker/data/db.sqlite3:/app/db.sqlite3
+        - ./docker/data/static:/static
+        - ./docker/data/upload:/upload
+    restart: on-failure
+    environment:
+      APP_STATIC_DIR: '/static'
+      APP_UPLOAD_DIR: '/upload'
+      APP_DEBUG: 0
+      APP_GUNICORN_LOGLEVEL: 'info'

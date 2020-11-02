@@ -84,6 +84,55 @@ Do initial migration first
 A guest user can browse API docs via the Insomnia viewer web interface, provided
 via http://127.0.0.1:8000/static/index.html
 
+## Run server
+
+### runserver
+
+````bash
+./manage.py runserver
+````
+
+### gunicorn (locally)
+
+**Note**: Working directory must be the project's root
+
+```bash
+gunicorn -c restaurant_rater/gunicorn.conf.py restaurant_rater.wsgi:application --preload
+```
+
+### gunicorn (pycharm)
+
+Create a new Python Run configuration, named Gunicorn or whatever.
+
+Find path:
+- Find the full gunicorn path, use ```which gunicorn``` in your projects path when virtualenv is loaded to find the
+full path.
+- Or find it by hand in myvenv/bin/gunicorn.
+
+**Note**: if gunicorn is not found, make sure you install all packages from requirements.txt.
+
+Apply full path in **Script path**.
+
+In **Parameters** paste this '-c gunicorn.conf.py wsgi:application --preload'
+- wsgi:application - means wsgi.py which is located in restaurant_rater/wsgi.py as python module and application is
+variable an instance of WSGIHandler.
+
+**Working directory** should be set as "restaurant_rater/restaurant_rater" using it's full path, not relative - where
+restaurant_rater is the root project path, and restaurant_rater is the Django project's python package.
+
+After saving the Run configuration try running it with run/debug
+
+Expected to see:
+```
+... Random config verbose garbage
+[2020-11-01 16:01:01 +0000] [29684] [INFO] Starting gunicorn 20.0.4
+[2020-11-01 16:01:01 +0000] [29684] [DEBUG] Arbiter booted
+[2020-11-01 16:01:01 +0000] [29684] [INFO] Listening at: http://0.0.0.0:8000 (29684)
+[2020-11-01 16:01:01 +0000] [29684] [INFO] Using worker: sync
+[2020-11-01 16:01:01 +0000] [29684] [DEBUG] 1 workers
+[2020-11-01 16:01:01 +0000] [29694] [INFO] Booting worker with pid: 29694
+```
+
 ## Admin
 
 An admin user can login via the admin web interface, provided
@@ -100,9 +149,6 @@ via http://127.0.0.1/admin/
 
 Login with sample user
 and the owner can see Menus admin page.
-
-The admin page for the menu has one field called company, which has also company admin, to be
-able to use the popup in place for creating companies
 
 ## API
 
@@ -122,3 +168,62 @@ To run VotingTests
 ```bash
 ./manage.py test api.tests.VotingTests
 ```
+
+# Docker
+
+This Dockerfile is based on the official Python image and it's full version including and OS, vim and less.
+
+Docker-compose is being added to manage the services.
+
+**Note**: for less complexity no database server was chosen, there for we have mounted the "docker/data/db.sqlite3"
+for the database to the root path of the django project
+
+Building
+
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+Logs
+
+```bash
+docker-compose logs -f
+```
+
+**NOTE**: Control the log level via the env var APP_GUNICORN_LOGLEVEL: info, debug see gunicorn docs for more. 
+
+### Start API service
+
+```bash
+docker-compose up -d
+```
+
+### Stop API service
+
+```bash
+docker-compose stop dj-api
+```
+
+### API exec manage.py
+
+```bash
+docker-compose exec dj-api python manage.py
+```
+
+Now we can use:
+- manage.py migrate
+- manage.py collectstatic
+- manage.py createsuperuser
+when needed.
+
+To access the shell in the container:
+
+```bash
+docker-compose exec dj-api bash
+```
+
+### Container structure
+
+Our Django project root is located in /app/
+Contains only the minimum required files to run Django, controlled via .dockerignore.

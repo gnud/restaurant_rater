@@ -1,0 +1,14 @@
+venv/**
+.idea
+.git
+upload/
+static/
+test_data/
+db.sqlite3
+README.md
+Dockerfile
+.dockerignore
+docker/
+**/*.pyc
+
+docker-compose.yml

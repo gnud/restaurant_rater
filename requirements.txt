@@ -13,3 +13,7 @@ django_extensions==3.0.9
 # Testing
 faker==4.14.0
 model-bakery==1.2.0
+
+#Production
+gunicorn==20.0.4
+whitenoise==5.2.0

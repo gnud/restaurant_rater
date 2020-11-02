@@ -299,3 +299,7 @@ cython_debug/
 
 # Development only, server can have different APP_UPLOAD_DIR env variable
 upload/**
+static/**
+
+docker/data/static/**
+docker/data/upload/**
