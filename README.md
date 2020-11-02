@@ -266,6 +266,8 @@ Contains only the minimum required files to run Django, controlled via .dockerig
 # Production
 
 URLS: 
+
 Admin: http://damjand.pythonanywhere.com/admin/
+
 API: http://damjand.pythonanywhere.com/api/v1/
 
