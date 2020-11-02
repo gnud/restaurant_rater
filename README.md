@@ -78,6 +78,12 @@ Do initial migration first
 ./manage.py migrate
 ```
 
+Now setup a cache table for the cache database backend 
+
+```bash
+./manage.py createcachetable
+```
+
 # Usage
 
 ## API Docs
@@ -221,6 +227,26 @@ To access the shell in the container:
 
 ```bash
 docker-compose exec dj-api bash
+```
+
+### First time
+
+1. Migrate database
+
+```bash
+docker-compose exec dj-api python manage.py createcachetable
+```
+
+2. collectstatic
+
+```bash
+docker-compose exec dj-api python manage.py collectstatic
+```
+
+3. Cache table for the cache database backend 
+
+```bash
+docker-compose exec dj-api python manage.py createcachetable
 ```
 
 ### Container structure

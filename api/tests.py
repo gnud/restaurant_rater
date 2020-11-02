@@ -1,11 +1,15 @@
 from constance import config
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from faker import Faker
+from django.core.cache import cache
+from django.db import connection
 
-from model_bakery import baker
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
+from faker import Faker
+from model_bakery import baker
 
 from api import models
 
@@ -19,6 +23,32 @@ TOTAL_RESTAURANTS = 3
 RESTAURANT_LIST_URL = "restaurant-list"
 RESTAURANT_DETAIL_URL = "restaurant-detail"
 RESTAURANT_VOTE_URL = "api-v2-restaurant-vote-list"
+
+
+class RestaurantCacheTests(APITestCase):
+    def test_caching_works(self):
+        """
+        If for some reason the next developer starts the project and misses the cache setup step, this will crash
+        the tests
+        Note: for some reason the tests make the cache table and this test always passes.
+        """
+
+        table_name = settings.CACHES.get('default', {}).get('LOCATION', 'my_cache_table')
+        all_tables = connection.introspection.table_names()
+        table_exists = table_name in all_tables
+        print(f'Checking for cache setup with table backend "{table_name}".')
+        print(f'tables included: {all_tables}.')
+
+        self.assertEqual(table_exists, True)
+        print('The cache is working I assume')
+
+        cache_key = 'test_hello'
+        sample_val = 'hello, python'
+
+        cache.set(cache_key, sample_val)
+        test_val = cache.get(cache_key)
+
+        self.assertEqual(test_val, sample_val)
 
 
 class RestaurantTests(APITestCase):
