@@ -10,6 +10,7 @@ from rest_framework.test import APITestCase
 
 from faker import Faker
 from model_bakery import baker
+from freezegun import freeze_time
 
 from api import models
 
@@ -23,6 +24,7 @@ TOTAL_RESTAURANTS = 3
 RESTAURANT_LIST_URL = "restaurant-list"
 RESTAURANT_DETAIL_URL = "restaurant-detail"
 RESTAURANT_VOTE_URL = "api-v2-restaurant-vote-list"
+RESTAURANT_HISTORY_URL = "api-v1-restaurant-history-list"
 
 
 class RestaurantCacheTests(APITestCase):
@@ -308,3 +310,111 @@ class VotingTests(APITestCase):
 
             if is_over:
                 self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+
+
+class HistoryTests(APITestCase):
+    def setUp(self) -> None:
+        super().setUp()
+
+        baker.make_recipe(
+            'api.userTemplate',
+            _quantity=TOTAL_USERS,
+        )
+
+        baker.make_recipe(
+            'api.restaurantTemplate',
+            _quantity=TOTAL_RESTAURANTS,
+        )
+
+    def test_history_list(self):
+        random_obj = models.Restaurant.objects.first()
+        url = reverse(RESTAURANT_HISTORY_URL, args=(random_obj.pk,))
+        self.client.force_login(get_user_model().objects.first())
+
+        dates = {
+            '2020-10-01T00:00:00.000000Z': 4,
+            '2020-11-02T00:00:00.000000Z': 5,
+            '2020-12-03T00:00:00.000000Z': 12,
+        }
+
+        # Bake some votes for current user, but make sure they are created in the past, present and future
+        for k, v in dates.items():
+            with freeze_time(k):
+                baker.make_recipe(
+                    'api.voteTemplate',
+                    restaurant=random_obj,
+                    _quantity=v,
+                )
+
+        # Check results
+        for k, v in dates.items():
+            response = self.client.get(url, {'created': k.split('T')[0]})
+            expected_count = dates.get(k)
+            results_count = len(response.data)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(expected_count, results_count)
+
+            expected_date = k
+            # Check individual dates whether they match with generated record's date
+            for d in response.data:
+                result_date = d.get('created', '')
+                self.assertEqual(expected_date.split('T')[0], result_date.split('T')[0])
+
+    def test_history_list_404(self):
+        random_obj = models.Restaurant.objects.first()
+        url = reverse(RESTAURANT_HISTORY_URL, args=(-1,))
+        self.client.force_login(get_user_model().objects.first())
+
+        dates = {
+            '2020-10-01T00:00:00.000000Z': 4,
+            '2020-11-02T00:00:00.000000Z': 5,
+            '2020-12-03T00:00:00.000000Z': 12,
+        }
+
+        # Bake some votes for current user, but make sure they are created in the past, present and future
+        for k, v in dates.items():
+            with freeze_time(k):
+                baker.make_recipe(
+                    'api.voteTemplate',
+                    restaurant=random_obj,
+                    _quantity=v,
+                )
+
+        # Check results
+        for k, v in dates.items():
+            response = self.client.get(url, {'created': k.split('T')[0]})
+            expected_count = dates.get(k)
+            results_count = len(response.data)
+
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+            self.assertNotEqual(expected_count, results_count)
+
+
+    def test_history_list_403(self):
+        random_obj = models.Restaurant.objects.first()
+        url = reverse(RESTAURANT_HISTORY_URL, args=(random_obj.pk,))
+
+        dates = {
+            '2020-10-01T00:00:00.000000Z': 4,
+            '2020-11-02T00:00:00.000000Z': 5,
+            '2020-12-03T00:00:00.000000Z': 12,
+        }
+
+        # Bake some votes for current user, but make sure they are created in the past, present and future
+        for k, v in dates.items():
+            with freeze_time(k):
+                baker.make_recipe(
+                    'api.voteTemplate',
+                    restaurant=random_obj,
+                    _quantity=v,
+                )
+
+        # Check results
+        for k, v in dates.items():
+            response = self.client.get(url, {'created': k.split('T')[0]})
+            expected_count = dates.get(k)
+            results_count = len(response.data)
+
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+            self.assertNotEqual(expected_count, results_count)

@@ -9,3 +9,4 @@ userTemplate = Recipe(
     password='password'
 )
 restaurantTemplate = Recipe(models.Restaurant)
+voteTemplate = Recipe(models.Vote)

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'constance.backends.database',
     'constance',
+    'django_filters',
 
     # Project apps
     'api.apps.ApiConfig',
@@ -155,6 +156,11 @@ CONSTANCE_CONFIG = {
     'DAILY_VOTES': (5, 'Rule for daily votes'),
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+}
 
 # USER variables
 

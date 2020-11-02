@@ -1,12 +1,17 @@
 from django.conf import settings
 from django.core.cache import cache
+from django.http import Http404
+from django_filters import rest_framework as filters
 
 from rest_framework import viewsets, permissions, status
+from rest_framework.generics import get_object_or_404
+from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 
 from . import models
 from . import serializers
 from . import utils
+from .filters import VotesFilter
 from .mixins import MultiSerializersMixin
 
 
@@ -30,7 +35,7 @@ class VoteViewSet(viewsets.ModelViewSet):
 
 
 class VoteCreateVoteViewSet(viewsets.GenericViewSet):
-    """ViewSet for the Vote class"""
+    """ViewSet for the VoteCreateVoteViewSet class"""
     queryset = models.Restaurant.objects.all()
     serializer_class = serializers.VoteResponseSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -82,3 +87,23 @@ class VoteCreateVoteViewSet(viewsets.GenericViewSet):
         _serializer = self.get_serializer(vote)
 
         return Response(data=_serializer.data)
+
+
+class VoteHistoryViewSet(ListModelMixin, viewsets.GenericViewSet):
+    """ViewSet for the VoteHistoryViewSet class"""
+    queryset = models.Vote.objects.all()
+    serializer_class = serializers.VoteResponseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = (filters.DjangoFilterBackend,)
+    # noinspection SpellCheckingInspection
+    filterset_class = VotesFilter
+
+    def get_queryset(self):
+        try:
+            obj = get_object_or_404(models.Restaurant.objects.filter(pk=self.kwargs.get('pk')))
+        except Exception as e:
+            # If we use text instead of a number for pk, say 404,
+            # because user don't need to know if we handle the cases differently for security sake
+            raise Http404()
+        return super().get_queryset() .filter(restaurant=obj)

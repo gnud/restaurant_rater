@@ -33,12 +33,12 @@ Bonus points, API is deployed somewhere (For example, Heroku)`
 - [x] django app for API
 - [x] documentations
 - [x] django app routes
-- [ ] requirements
+- [x] requirements
     1. [x] Everyone can add/remove/up... 
     1. [x] Every user gets X (hardcod...
     1. [x] Every day vote amounts ar...
-    1. [ ] Show the history of selec...
-    1. [ ] Do not forget, that front... [WIP: vote done 1 of 2]
+    1. [x] Show the history of selec...
+    1. [x] Do not forget, that front...
     1. [x] API routes dump in docs [WIP]
 - [x] docker container + docker compose
 - [x] production on Heroku or better
@@ -178,6 +178,12 @@ To run VotingTests
 ./manage.py test api.tests.VotingTests
 ```
 
+To run HistoryTests
+
+```bash
+./manage.py test api.tests.HistoryTests
+```
+
 # Docker
 
 This Dockerfile is based on the official Python image and it's full version including and OS, vim and less.
@@ -256,3 +262,10 @@ docker-compose exec dj-api python manage.py createcachetable
 
 Our Django project root is located in /app/
 Contains only the minimum required files to run Django, controlled via .dockerignore.
+
+# Production
+
+URLS: 
+Admin: http://damjand.pythonanywhere.com/admin/
+API: http://damjand.pythonanywhere.com/api/v1/
+

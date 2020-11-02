@@ -11,6 +11,11 @@ router.register(
     viewset=api.VoteCreateVoteViewSet,
     basename='api-v2-restaurant-vote'
 )
+router.register(
+    prefix=r'restaurant/(?P<pk>[^/]+)/history',
+    viewset=api.VoteHistoryViewSet,
+    basename='api-v1-restaurant-history'
+)
 
 
 urlpatterns = (
